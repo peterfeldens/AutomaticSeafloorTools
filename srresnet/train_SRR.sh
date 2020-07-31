@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+CUDA_VISIBLE_DEVICES=0 python main.py \
+    --output_dir ./experiment_SRResnet/valid_baltic \
+    --summary_dir ./experiment_SRResnet/valid_baltic/log/ \
+    --mode train \
+    --is_training True \
+    --task SRResnet \
+    --batch_size 16 \
+    --flip True \
+    --random_crop False \
+    --crop_size 50 \
+    --input_dir_LR  /home/peter/training/BalticSeaTraining/tiles/train/LRx2\
+    --input_dir_HR  /home/peter/training/BalticSeaTraining/tiles/train/HR \
+    --num_resblock 16 \
+    --perceptual_mode MSE \
+    --name_queue_capacity 4096 \
+    --image_queue_capacity 4096 \
+    --ratio 0.001 \
+    --learning_rate 0.0001 \
+    --decay_step 500000 \
+    --decay_rate 0.1 \
+    --stair True \
+    --beta 0.9 \
+    --max_iter 1000000 \
+    --queue_thread 12 \
+    --save_freq 10000 \
+    --crop_crop 2

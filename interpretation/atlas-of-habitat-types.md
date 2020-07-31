@@ -1,2 +1,0 @@
-# ATLAS of habitat types
-

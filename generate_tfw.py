@@ -45,7 +45,7 @@ def getfiles(ID='', PFAD='.'):
     return files
 
 
-def generate_tfw(infile, scale_factor=4, suffix='tfw', gen_prj='prj'):
+def generate_tfw(infile, scale_factor=1, suffix='.tfw', gen_prj='prj'):
     src = gdal.Open(infile)
     xform = src.GetGeoTransform()
 

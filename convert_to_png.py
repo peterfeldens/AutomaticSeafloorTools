@@ -28,6 +28,7 @@ except:
 args = parser.parse_args()
 args.directory.strip("/")
 print("TIF warnings are supressed")
+
 def getfiles(ID='', PFAD='.'):
     # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
     files = []
@@ -39,10 +40,10 @@ def getfiles(ID='', PFAD='.'):
 
 filelist = getfiles('.tif', args.directory)
 
-def make_png(image):
-    cmd = 'mogrify -quiet -format png ' + '"' + args.directory + '/' + image + '"'
+def make_png(directory, image):
+    cmd = 'mogrify -quiet -format png ' + '"' + directory + '/' + image + '"'
     os.system(cmd)
     return
 
 
-Parallel(n_jobs=num_cores)(delayed(make_png)(image) for image in tqdm(filelist))
+Parallel(n_jobs=num_cores)(delayed(make_png)(args.directory, image) for image in tqdm(filelist))

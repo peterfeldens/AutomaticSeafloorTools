@@ -64,7 +64,7 @@ def convert_pixel_to_real(image, box):
 #############START
 
 image_folder = '/Volumes/Work/valid_orig_20pixels'
-image_type = '.tig'
+image_type = '.tif'
 output = '/Volumes/Work/out_valid_original.csv'
 labels_to_names = {0: 'stone'}
 model_path = os.path.join('/Users/peter/IOW Marine Geophysik Dropbox/KI_Training_Sets/Weights/Object_Detection/resnet50_csv_14_runSR14_63mAP.h5')

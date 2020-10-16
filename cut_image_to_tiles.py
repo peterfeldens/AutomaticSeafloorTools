@@ -13,6 +13,12 @@ import glob
 from tqdm import tqdm
 import gdal
 
+from joblib import Parallel, delayed
+import multiprocessing
+
+num_cores = multiprocessing.cpu_count() - 1
+print("Using ", num_cores, " cores. ")
+
 parser = argparse.ArgumentParser()
 
 #Required Arguments
@@ -26,7 +32,10 @@ parser.add_argument('wildcards', type=str, help="identfiy the files")
 parser.add_argument("-o","--overlap", type=int, help="number of overlap between pixels", default=0)
 
 
-
+def execute_command(command):
+    os.system(command)
+    return
+    
 def getfiles(ID='', PFAD='.'):
     # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
     files = []
@@ -56,6 +65,8 @@ for mosaic in files:
     print(mosaic)
 
 
+
+
 print("NOTICE: ALL input images must have the same number of bands NOTICE")
 print("Split the dataset if required or convert all to greysscale")
 skipped_files = []
@@ -66,11 +77,15 @@ for mosaic in tqdm(files):
             cmd = 'gdal_retile.py -ps ' + str(args.tile_size) + ' ' + str(args.tile_size) + ' -targetDir ' + \
             '"' + args.target_directory + '"' + ' ' + '"' + \
             args.source_directory + '/' + mosaic+'"' 
-            os.system(cmd)
+            #os.system(cmd)
+            Parallel(n_jobs=num_cores)(delayed(execute_command)(str(cmd))
+                                       for file in tqdm(files))
         if args.overlap > 0:
             print("Cutting with Overlap")
             cmd = 'gdal_retile.py -ps ' + str(args.tile_size) + ' ' + str(args.tile_size) + ' -overlap ' + str(args.overlap) + ' -targetDir ' + '"' + args.target_directory + '"' + ' ' + '"' +  args.source_directory + '/' + mosaic+'"' 
-            os.system(cmd)
+            #os.system(cmd)
+            Parallel(n_jobs=num_cores)(delayed(execute_command)(str(cmd))
+                                       for file in tqdm(files))
 
     except:
         skipped_files.append(mosaic)

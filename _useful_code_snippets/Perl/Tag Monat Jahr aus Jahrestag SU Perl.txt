@@ -1,0 +1,84 @@
+su_calculate_doy.pl
+Typ
+Text
+Größe
+2 KB (2.008 Byte)
+Belegter Speicherplatz
+2 KB (2.008 Byte)
+Speicherort
+SeismicUnix
+Eigentümer
+Ich
+Geändert am
+30.08.2011 von mir
+Geöffnet am
+12:57 von mir
+Erstellt
+23.08.2019 mit Insync
+Beschreibung hinzufügen
+Betrachter können die Datei herunterladen.
+
+#!/sw/bin/perl5.8.6
+
+# Berechnet aus den SU-Datumsangaben für eine Tag/Monat/Jahr Angabe, und schreibt das als zusätzliche Spalten in die Datei
+# Ich bekomme es nicht hin, die werte Jahr=???? auszulesen. Die Reihenfolge muss also stimmen: Jahr Tag Hour Minute Sec tracl
+# So müsste das gehen: my ($year, $doy) = $yyyy_doy =~ /(....)(...)/; $yyyy_doy dann als kombiniert beschreibung/wert einlesen
+
+
+use strict;
+use warnings;
+use Tie::File;
+use Date::Calc qw (Add_Delta_Days);
+
+print " \n \n Umrechnen von Tagen in Datum in su-headerfiles. April 2010. Peter Feldens \n \n";
+
+my @list = glob("*.header") or die "Cannot read original files";
+
+foreach my $headerfile (@list) {
+
+
+	tie my @aktuellesheaderfile, 'Tie::File', $headerfile;
+	my $Zeilenzahl=@aktuellesheaderfile;
+		foreach my $Zeile (@aktuellesheaderfile){
+ 					$Zeile  =~ s/year=//;
+ 					$Zeile  =~ s/day=//;
+ 					$Zeile  =~ s/hour=//;
+ 					$Zeile  =~ s/minute=//;
+ 					$Zeile  =~ s/sec=//;
+ 					$Zeile  =~ s/fldr=//;
+ 					$Zeile  =~ s/\t/ /g;   #Tabulatoren zu Leerzeichen
+ 					$Zeile  =~ s/\s+/ /g;   #Überschüssige Leerzeichen weg
+ 					$Zeile  =~ s/^\s//g;   #Erstes Leerzeichen weg.
+ 		 }
+ 			
+ 	#Berechnen des Datums mit Date::Calc
+ 
+ 
+ 	printf "Berechnen des Datums und zurückschreiben ins array... \n";
+
+	foreach my $Zeile (@aktuellesheaderfile,my $i=0) {
+		#Auslesen der originalen Zeiten
+		my @aktuelleZeile = split (/ /,$Zeile);
+			if (@aktuelleZeile > 1 ){
+				my $year=$aktuelleZeile[0];
+				my $days=$aktuelleZeile[1];
+				
+					#Berechnen der korrigierten Zeiten
+					(my $YYYY, my $month, my $day) = Add_Delta_Days ($year,1,1,$days-1);
+					shift @aktuelleZeile;
+					shift @aktuelleZeile;
+					unshift (@aktuelleZeile, $YYYY);
+					unshift (@aktuelleZeile, $month);
+					unshift (@aktuelleZeile, $day);
+					$aktuellesheaderfile[$i] = "@aktuelleZeile";	
+			}
+		$i++;
+		}
+ 
+print "Erfolgreich. Reihenfolge in der Datei: Tag Monat Jahr Hour Minute Second TraceNumber FileID sx sy \n \n";
+untie @aktuellesheaderfile;
+}
+
+
+
+

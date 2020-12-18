@@ -1,0 +1,53 @@
+'Calculates the volume and area of a grid file, looping through multiple Z values
+'as the other constant surface value (with user-specified min, max and increment)
+'and writes the results to the worksheet
+'Edit "User Input" section to define the upper surface grid file and the Z value iterations
+
+Sub Main
+	Dim SurferApp As Object
+	Set SurferApp = CreateObject("Surfer.Application")
+	SurferApp.Visible = True
+
+'-------------User Input ------------------------
+	Path = "F:\Dropbox\Schweiz\"
+	UpperSurfaceGrid = "soppensee.grd"
+	Min = -30
+	Max = -2
+	Increment = 1
+'------------------------------------------------------
+
+'Create a new worksheet window
+	Set Wks = SurferApp.Documents.Add(srfDocWks)
+
+For i =Min To Max Step Increment
+	UpperSurface =Path+UpperSurfaceGrid
+	LowerSurface = i
+	Dim Results() As Double
+	SurferApp.GridVolume(upper:=UpperSurface,lower:=LowerSurface, presults:=Results, showreport:=False)
+
+	Iteration= ((Format(i)-Min)/Increment)+1
+
+	Wks.Cells("A1").Value = "Z Value:"
+	Wks.Cells(Iteration, 1).Value =	i
+
+	Wks.Cells("B1").Value = "Positive Volume [Cut]:"
+	Wks.Cells(Iteration, 2).Value = Results(srfGVPosVol)
+
+	Wks.Cells("C1").Value = "Negative Volume [Fill]:"
+	Wks.Cells(Iteration, 3).Value = Results(srfGVNegVol)
+
+	Wks.Cells("D1").Value = "Net Volume [Cut minus Fill]:"
+	Wks.Cells(Iteration, 4).Value = Results(srfGVPosVol) - Results(srfGVNegVol)
+
+	Wks.Cells("E1").Value = "Negative Planar Area:"
+	Wks.Cells(Iteration, 5).Value = Results(srfGVNegPlanarArea)
+
+	Wks.Cells("F1").Value = "Negative Surface Area:"
+	Wks.Cells(Iteration, 6).Value = Results(srfGVNegArea)
+
+Next i
+
+'Saves the worksheet
+	Wks.SaveAs(Path+"VolumeReport2.dat")
+
+End Sub

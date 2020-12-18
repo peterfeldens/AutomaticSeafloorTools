@@ -1,0 +1,19 @@
+Sub Main
+
+'Declare the variable that will reference the application
+    Dim SurferApp As Object
+    Set SurferApp = CreateObject("Surfer.Application")
+    SurferApp.Visible = True
+
+'Declares Plot as an object and opens an SRF file
+    Dim Plot As Object
+   Set Plot = SurferApp.Documents.Open(FileName:="F:\Hypack 2016\Projects\Klaashahn_H¸telmoor\surfer\001_1247.srf")
+
+   Dim MapFrame2 As Object
+   Set MapFrame2 = Plot.Shapes.Item(Index:=3)
+
+'Changes the grid file for the contour map
+   Dim ImageMap As Object
+   ImageMap.GridFile="F:\Hypack 2016\Projects\Klaashahn_H¸telmoor\ASCII\001_1255.grd"
+
+End Sub

@@ -1,0 +1,18 @@
+Hallo Jens,
+
+Das Problem betraf vor Allem die Variante UMTS-USB-Stick am Norbit-Rechner. Ob WLAN ein Problem ist, weiß ich so gar nicht.
+
+Wenn ich mich recht erinnere, funktionierte es hiermit:
+
+Registry Key anlegen und reboot:
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\Local]
+"fMinimizeConnections"=dword:00000000
+
+Aus https://social.technet.microsoft.com/Forums/de-DE/49e0470a-2743-4aa8-9178-97303053b936/internes-lte-modem-und-lan-gleichzeitig-verwenden?forum=win10itprogeneralDE
+
+ganz unten...
+
+Viele Grüße
+
+Gabriel

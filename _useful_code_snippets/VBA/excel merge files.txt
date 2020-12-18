@@ -1,0 +1,106 @@
+Attribute VB_Name = "Modul2"
+Sub Copy_Worksheets_Laser_Agata()
+
+'Liest alle Excel-Dateien in einem Verzeichnis auf. Liest von der ersten Datei, erste Spalte die Labels, und f¸gt anschliessend einen zu definierenden Bereich der Spalten in allen Dateien im Verzeichnis in die neu angelegte Datei ein.
+
+
+'Variablendeklaration
+Dim MyPatch As String
+Dim FilesInPath As String
+Dim MyFiles() As String
+Dim FNum As Long
+Dim mybook As Workbook, BaseWks As Worksheet
+Dim sourceRange As Range, destrange As Range
+Dim cnum As Integer, rnum As Integer
+
+
+
+' Change this to the path\folder location of your files, add slash if necessary.
+    MyPath = InputBox _
+    ("Verzeichnis angeben, in dem die Excel-Daten liegen")
+    If Right(MyPath, 1) <> "\" Then
+        MyPath = MyPath & "\"
+    End If
+                ' If there are no Excel files in the folder, exit.
+                    FilesInPath = Dir(MyPath & "*.xl*")
+                    If FilesInPath = "" Then
+                        MsgBox "No files found"
+                        Exit Sub
+                    End If
+                    
+                    
+    
+'Make File List: Fill Array MyFiles
+FNum = 0
+    Do While FilesInPath <> ""
+        FNum = FNum + 1
+        ReDim Preserve MyFiles(1 To FNum)
+        MyFiles(FNum) = FilesInPath
+        FilesInPath = Dir()
+    Loop
+    
+    
+
+'Erstelle eine neue Tabelle
+    Set BaseWks = Workbooks.Add(xlWorksheet).Worksheets(1)
+    rnum = 1
+    
+'Create Labels from First File, Assume Labels are in Column A!
+
+            Set mybook = Nothing
+            Set mybook = Workbooks.Open(MyPath & MyFiles(1))
+           ' Change this range to fit your own needs.
+                With mybook.Worksheets(1)
+                    Set sourceRange = .Range("A1:A35")
+                End With
+
+                ' Set the destination range.
+                  Set destrange = BaseWks.Range("A" & rnum)
+
+                 ' Copy the values from the source range
+                 ' to the destination range.
+                        With sourceRange
+                            Set destrange = destrange. _
+                                            Resize(.Rows.Count, .Columns.Count)
+                        End With
+                        destrange.Value = sourceRange.Value
+
+                       
+                mybook.Close savechanges:=False
+                BaseWks.Columns.AutoFit
+  
+
+'Copy Content
+        'In diese Row-Nummer wird angenfangen einzuf¸gen
+        rnum = 1
+        'In diese Spaltennummer wird angefangen einzuf¸gen
+        cnum = 2
+        For FNum = LBound(MyFiles) To UBound(MyFiles)
+             Set mybook = Nothing
+             Set mybook = Workbooks.Open(MyPath & MyFiles(FNum))
+        
+             'Source Range festlegen, die bleibt f¸r alle Dateien konstant Spalte B1 bis B35
+             With mybook.Worksheets(1)
+                    Set sourceRange = .Range("B1:B35")
+              End With
+              
+              Set destrange = BaseWks.Cells(rnum, cnum)
+                    'Methodik: Eine Zelle festlegen, die zum Bereich ausdehnen, der der source-Range entspricht.
+                 With sourceRange
+                            Set destrange = destrange. _
+                                            Resize(.Rows.Count, .Columns.Count)
+                        End With
+                        destrange.Value = sourceRange.Value
+
+                ' N‰chste Datei in neue Spalte
+                cnum = cnum + 1
+                
+                'Aufgemachtes Worksheet schliessen
+                mybook.Close savechanges:=False
+                
+            Next FNum
+        BaseWks.Columns.AutoFit
+
+
+
+End Sub

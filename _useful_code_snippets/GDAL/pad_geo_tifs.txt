@@ -1,0 +1,99 @@
+import numpy as np
+import gdal
+import os
+
+def pad_geotiff(pathtopad, npad, outpath=0, padval=0):
+    """
+    Pads a geotiff image by adding npad pixels to each edge.
+    """
+    base, folder, file, ext = gh.parse_path(pathtopad)
+    if outpath == 0:
+        outpath = os.path.join(base,folder,file) + '_pad' + ext
+
+    topad = gdal.Open(pathtopad)
+    gt = topad.GetGeoTransform()
+    colortable = topad.GetRasterBand(1).GetColorTable()
+    data_type = topad.GetRasterBand(1).DataType
+    Itopad = topad.ReadAsArray()
+
+    ulx = gt[0] - gt[1] * npad
+    uly = gt[3] - gt[5] * npad
+#    lrx = gt[0] + gt[1] * (topad.RasterXSize + npad)
+#    lry = gt[3] + gt[5] * (topad.RasterYSize + npad)
+
+    # Make new geotransform
+    gt_new = (ulx, gt[1], gt[2], uly, gt[4], gt[5])
+
+    # Make padded raster (pad with zeros)
+    raster = np.pad(Itopad, npad, mode='constant', constant_values=padval)
+
+    write_tile(raster, gt_new, topad, outpath, dtype=data_type, color_table=colortable)
+
+    return outpath
+
+
+def write_tile(raster, gt, data_obj, outputpath, dtype=gdal.GDT_UInt16, options=0, color_table=0, nbands=1, nodata=False):
+
+    width = np.shape(raster)[1]
+    height = np.shape(raster)[0]
+
+    # Prepare destination file
+    driver = gdal.GetDriverByName("GTiff")
+    if options != 0:
+        dest = driver.Create(outputpath, width, height, nbands, dtype, options)
+    else:
+        dest = driver.Create(outputpath, width, height, nbands, dtype)
+
+    # Write output raster
+    if color_table != 0:
+        dest.GetRasterBand(1).SetColorTable(color_table)
+
+    dest.GetRasterBand(1).WriteArray(raster)
+
+    if nodata is not False:
+        dest.GetRasterBand(1).SetNoDataValue(nodata)
+
+    # Set transform and projection
+    dest.SetGeoTransform(gt)
+    wkt = data_obj.GetProjection()
+    srs = osr.SpatialReference()
+    srs.ImportFromWkt(wkt)
+    dest.SetProjection(srs.ExportToWkt())
+
+
+    # Close output raster dataset 
+    dest = None
+
+def parse_path(path):
+
+    """
+    Parses a file or folderpath into: base, folder (where folder is the 
+    outermost subdirectory), filename, and extention. Filename and extension
+    are empty if a directory is passed.
+    """
+
+    if path[0] != os.sep:
+        path = os.sep + path
+
+    filename = ''
+    extension = ''
+
+    split_for_ext = path.split('.')
+    if len(split_for_ext) > 1:
+        extension = '.' + split_for_ext[-1]
+    else:
+        extension = ''
+
+    # Remove trailOing '/'
+    path = os.path.normpath(split_for_ext[0])
+
+    if len(extension) > 0:
+        filename = path.split(os.sep)[-1]
+        path = os.path.join(*path.split(os.sep)[:-1])
+
+    path = list(filter(None,path.split(os.sep)))
+
+    folder = path[-1]
+    base = os.sep + os.path.join(*path[:-1])
+
+    return base, folder, filename, extension

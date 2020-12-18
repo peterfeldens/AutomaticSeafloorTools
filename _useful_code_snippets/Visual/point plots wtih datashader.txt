@@ -1,0 +1,13 @@
+import pandas as pd
+from functools import partial
+import datashader as ds
+import datashader.transfer_functions as tf
+
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('test.xyz', sep='\t')
+
+cvs = ds.Canvas(plot_width=400, plot_height=400)
+agg = cvs.points(df, 'Footprint X', 'Footprint Y', ds.mean('Intensity'))
+img = tf.shade(agg, cmap=["red", 'darkblue'], how='linear')
+img

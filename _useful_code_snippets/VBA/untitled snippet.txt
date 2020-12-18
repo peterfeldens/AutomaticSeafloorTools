@@ -1,0 +1,95 @@
+Attribute VB_Name = "Modul1"
+Sub Sum_Worksheets_Laser_Agata()
+
+Dim MyPatch As String
+Dim FilesInPath As String
+Dim MyFiles() As String
+Dim FNum As Long
+Dim rnum As Integer, cnum As Integer
+Dim Summe1 As Double
+Dim Summe2 As Double
+Dim Summe3 As Double
+Dim Summe4 As Double
+Dim Summe5 As Double
+
+' Change this to the path\folder location of your files, add slash if necessary.
+    MyPath = InputBox _
+    ("Verzeichnis angeben, in dem die Excel-Daten liegen")
+    If Right(MyPath, 1) <> "\" Then
+        MyPath = MyPath & "\"
+    End If
+                ' If there are no Excel files in the folder, exit.
+                    FilesInPath = Dir(MyPath & "*.xl*")
+                    If FilesInPath = "" Then
+                        MsgBox "No files found"
+                        Exit Sub
+                    End If
+                    
+'Make File List: Fill Array MyFiles
+FNum = 0
+    Do While FilesInPath <> ""
+        FNum = FNum + 1
+        ReDim Preserve MyFiles(1 To FNum)
+        MyFiles(FNum) = FilesInPath
+        FilesInPath = Dir()
+    Loop
+    
+                    
+                    
+'÷ffnen eines neuen Worksheets
+    Set BaseWks = Workbooks.Add(xlWorksheet).Worksheets(1)
+
+'Einf¸gen der Labels
+BaseWks.Cells(1, 1) = "Volume %"
+BaseWks.Cells(2, 1) = "10"
+BaseWks.Cells(3, 1) = "25"
+BaseWks.Cells(4, 1) = "50"
+BaseWks.Cells(5, 1) = "75"
+BaseWks.Cells(6, 1) = "90"
+
+'Einf¸gen der jeweiligen Werte aus den anderen Dateien
+
+        'In diese Row-Nummer wird angenfangen einzuf¸gen, 1 ist f¸r den Dateinamen
+        rnum = 2
+        'In diese Spaltennummer wird angefangen einzuf¸gen
+        cnum = 2
+        
+        
+        For FNum = LBound(MyFiles) To UBound(MyFiles)
+             Set mybook = Nothing
+             Set mybook = Workbooks.Open(MyPath & MyFiles(FNum))
+             
+             'Schreiben des aktuellen Dateinamens
+             BaseWks.Cells(1, cnum) = MyFiles(FNum)
+             
+             'Einf¸gen der Summen
+    
+              
+
+             'Summen aus den Zieldateien bilden
+
+            With mybook.Worksheets(1)
+                    Summe1 = Application.WorksheetFunction.Sum(Range("B69:M69"))
+                    Summe2 = Application.WorksheetFunction.Sum(Range("B70:M70"))
+                    Summe3 = Application.WorksheetFunction.Sum(Range("B71:M71"))
+                    Summe4 = Application.WorksheetFunction.Sum(Range("B72:M72"))
+                    Summe5 = Application.WorksheetFunction.Sum(Range("B73:M73"))
+             End With
+              
+            BaseWks.Cells(2, cnum) = Summe1
+            BaseWks.Cells(3, cnum) = Summe2
+            BaseWks.Cells(4, cnum) = Summe3
+            BaseWks.Cells(5, cnum) = Summe4
+            BaseWks.Cells(6, cnum) = Summe5
+
+                ' N‰chste Datei in neue Spalte
+                cnum = cnum + 1
+                
+                'Aufgemachtes Worksheet schliessen
+                mybook.Close savechanges:=False
+                
+            Next FNum
+            BaseWks.Columns.AutoFit
+          
+
+End Sub

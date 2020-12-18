@@ -1,0 +1,1 @@
+gdal_merge.py -separate 1.tif 2.tif 3.tif -o rgb.tif

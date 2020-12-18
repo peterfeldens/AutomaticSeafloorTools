@@ -1,0 +1,98 @@
+Sub Main
+
+'Create Grapher as an Object
+Dim Grapher As Object
+
+'Start Grapher
+Set Grapher = CreateObject("Grapher.Application")
+
+Grapher.Visible = True
+
+'Grapher ˆffnen, neuen Plot aufmachen etc.
+Dim Plot1 As Object
+Set Plot1 = Grapher.Documents.Add(grfPlotDoc)
+Set Shapes= Plot1.Shapes
+Dim Graph1 As Object
+Dim WkS As Object
+
+
+'Variablen angeben
+proben=5
+spalte=2   'weiter unten anpassen f¸r namen if ungleich 2
+firstrow=2
+lastrow=18
+file="Y:\Dropbox\Artikel_Rippeln\Histogramme_jetzt_aber_peter.xls" 'Anf¸hrungszeichen nicht vergessen, Exceldateien nur eine Tabelle, sonst gibts Klickere
+
+
+'Diese Variablen nicht ‰ndern
+ersterdurchlauf=1
+probenzahl=proben+1
+probe=1
+
+While spalte <= probenzahl
+
+		If ersterdurchlauf = 1 Then
+			'Erster Graph und Formatierungen
+			Set Graph1 = Plot1.Shapes.AddLinePlotGraph(file,1,spalte,Line1Text)
+
+			'X-Achse logharitmisch
+			Set XAxis1 = Graph1.Axes.Item(1)
+			XAxis1.AScale = grfAxisLog
+
+			'In diesem Datensatz steht der Anteil kleiner 63m¸ in der ersten Zeile, der soll weg.
+			Graph1.Plots.Item(1).AutoFirstRow = True
+			Graph1.Plots.Item(1).FirstRow = firstrow
+			Graph1.Plots.Item(1).LastRow = lastrow
+			Graph1.Plots.Item(1).Visible = False
+			ersterdurchlauf=0
+			spalte = spalte + 1
+			probe=probe+1
+		End If
+
+	Graph1.AddLinePlot(file,1,spalte)
+	Graph1.Plots.Item(probe).AutoFirstRow = False
+	Graph1.Plots.Item(probe).FirstRow = firstrow
+	Graph1.Plots.Item(probe).LastRow = lastrow
+	Graph1.Plots.Item(probe).Visible = False
+	probe=probe+1
+	spalte=spalte+1
+Wend
+
+
+'Labels zu Line Plots zuordnen
+spalte=2
+probe=1
+While spalte<=probenzahl
+		Set WkS = Grapher.Documents.Open(file)
+		Set WkSRange = WkS.Range(1,spalte)
+		Graph1.Plots.Item(probe).Name = WkSRange.Value
+		spalte=spalte+1
+		probe=probe+1
+Wend
+
+
+
+'Fits erstellen
+Line_Plot=1
+fitnummer=probenzahl
+While Line_Plot < probenzahl
+	Set aktuellerPlot=Graph1.Plots.Item(Line_Plot)
+	aktuellerPlot.Visible = False
+	aktuellerPlot.AddFit(grfSplineFit)
+	Graph1.Plots.Item(fitnummer).Visible = False
+	Line_Plot=Line_Plot+1
+	fitnummer=fitnummer+1
+Wend
+
+'Labels zu Fits zuordnen
+spalte=2
+fitnummer=probenzahl
+While spalte<=probenzahl
+		Set WkS = Grapher.Documents.Open(file)
+		Set WkSRange = WkS.Range(1,spalte)
+		Graph1.Plots.Item(fitnummer).Name = "Fit_" & WkSRange.Value
+		spalte=spalte+1
+		fitnummer=fitnummer+1
+Wend
+
+End Sub

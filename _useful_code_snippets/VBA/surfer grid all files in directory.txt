@@ -1,0 +1,63 @@
+' GridAll.bas grids all of the specified type of data file in the specified directory.
+' You must specify the file extension and file directory below in the script.
+' Grid files are saved in the same directory.
+'
+' If you run the script and nothing appears to happen, make sure the file_directory is valid.
+' See bottom of script for common errors
+
+Sub Main
+Debug.Clear
+''''''''''''' User Variables ''''''''''''''''''
+
+file_extension	= "XYZ"
+
+file_directory	= "F:\Hypack 2016\Projects\Klaashahn_H¸telmoor\ASCII\"
+
+'''''''''''''''''''''''''''''''''''''''''''''''
+	Set surf = CreateObject("surfer.application")
+	surf.Visible = True 'Progress for each file can be seen in the status bar of the application.
+
+	'Make sure the file extension has no extra . and the data directory has a trailing \
+	file_extension	= LCase(Right(file_extension,(Len(file_extension) - InStrRev(file_extension,"."))))
+	If  Len(file_directory)-InStrRev(file_directory,"\") <> 0 Then file_directory = file_directory + "\"
+
+	data_file = Dir( file_directory  + "*." + file_extension)
+
+	On Error GoTo FileError
+	While data_file <> ""
+		'Define output grid file directory & name
+		grid_file	= file_directory + Left(data_file, Len(data_file)-(Len(data_file)-InStrRev(data_file,".")+1) ) + ".grd"
+
+		'Grid the data file with the current Surfer defaults (but do not fill the screen with grid reports)
+		'surf.GridData(DataFile:= file_directory + data_file, ShowReport:=False, OutGrid:=grid_file)
+
+		' You can uncomment line below to make explicit changes to Gridding options.  Make
+		' sure to comment out the line above or files will be gridded twice.
+		'
+		' For more inforomation about using these options and thier definitions please see
+		' the Surfer Help File, available by using the menu command HELP | ABOUT and then
+		' searching for "GridData".
+		'
+		surf.GridData3(DataFile:= file_directory + data_file, xCol:=1, yCol:=2, zCol:=3, Algorithm:=srfMovingAverage, ShowReport:=False, SearchEnable:=True, SearchRad1:=0.5, SearchRad2:=0.5, SearchMinData:=1, xSize:=0.5, YSize:=0.5, OutGrid:=grid_file, OutFmt:=srfGridFmtS7)
+
+		Debug.Print data_file
+		data_file = Dir() 'get next file
+	Wend
+
+	surf.Quit
+	Exit Sub
+
+	'Print a meaningful error message for each file that did not grid correctly
+	FileError:
+	Debug.Print  "Error:	" + data_file + "						" + Err.Description
+	Resume Next
+End Sub
+' Helpful error hints:
+'
+'a) If the script appears to do nothing, make sure file_directory is valid.
+'b) "xMin must be < xMax" usually means there is no griddable data.  Check if there really is data, if it is in columns ABC, and that it is formatted as number and not as text or general.
+'c) "Insufficient data in worksheet" means there are less than three griddable Z values in the worksheet.
+'d) "Inadequate data (all data lie in a horizontal plane)" means that all Z values are the same.
+'e) "Unknown worksheet import format" the file format was incompatible with Surfer.  Common if the file was an Excel 2007 spreadsheet and your Surfer version is 8 or lower.
+
+

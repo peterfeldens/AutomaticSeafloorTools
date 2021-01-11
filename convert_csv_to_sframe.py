@@ -10,31 +10,25 @@
 # if this in an annotion file, empty line are deleted with sed '/pattern/d' file > file , where
 # pattern is something like ,,
 
-import turicreate as tc
-import os
 import argparse
+import os
 
+import turicreate as tc
+
+import automatic_seafloor_functions as asf
 
 parser = argparse.ArgumentParser()
-#Required Arguments
+# Required Arguments
 parser.add_argument('directory', type=str, help="Folder with image data")
 parser.add_argument('csv', type=str, help="csv file with image description")
 parser.add_argument('sframe_out', type=str, help="name of sframe_out file")
 
-try:
-    options = parser.parse_args()
-except:
-    parser.print_help()
-    sys.exit(0)
-
-args = parser.parse_args()
+args = asf.parse_args(parser)
 args.directory.strip("/")
 
-
-
-IMAGES_DIR = args.directory # Change if applicable
+IMAGES_DIR = args.directory  # Change if applicable
 csv_path = args.csv  # assumes CSV column as above
-csv_sf = tc.SFrame.read_csv(csv_path, header = False, na_values = '')
+csv_sf = tc.SFrame.read_csv(csv_path, header=False, na_values='')
 
 
 def row_to_bbox_coordinates(row):
@@ -42,9 +36,9 @@ def row_to_bbox_coordinates(row):
     Takes a row and returns a dictionary representing bounding
     box coordinates:  (center_x, center_y, width, height)  e.g. {'x': 100, 'y': 120, 'width': 80, 'height': 120}
     """
-    return {'x': row['X2'] + (row['X4'] - row['X2'])/2,
+    return {'x': row['X2'] + (row['X4'] - row['X2']) / 2,
             'width': (row['X4'] - row['X2']),
-            'y': row['X3'] + (row['X5'] - row['X3'])/2,
+            'y': row['X3'] + (row['X5'] - row['X3']) / 2,
             'height': (row['X5'] - row['X3'])}
 
 
@@ -53,7 +47,6 @@ csv_sf['coordinates'] = csv_sf.apply(row_to_bbox_coordinates)
 del csv_sf['X2'], csv_sf['X4'], csv_sf['X3'], csv_sf['X5']
 # rename columns
 csv_sf = csv_sf.rename({'X6': 'label', 'X1': 'name'})
-
 
 # Load all images in random order
 sf_images = tc.image_analysis.load_images(IMAGES_DIR, recursive=True,
@@ -80,7 +73,7 @@ csv_sf = csv_sf.pack_columns(
 sf_annotations = csv_sf.groupby('name',
                                 {'annotations': tc.aggregate.CONCAT('bbox')})
 
-#workaround, weil in "name" bei annotations immer noch der ganze pfad steht und dann der vergleich nicht geht
+# workaround, weil in "name" bei annotations immer noch der ganze pfad steht und dann der vergleich nicht geht
 info = sf_annotations['name'].apply(
     lambda path: os.path.basename(path).split('/')[:1])
 info = info.unpack().rename({'X.0': 'name'})

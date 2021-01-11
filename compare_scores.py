@@ -1,12 +1,15 @@
-import sys
 import argparse
-import os
-import numpy as np
+import argparse
 import math
+
+import numpy as np
 import pandas as pd
-from skimage.measure import compare_ssim as ssim
 from skimage.io import imread
+from skimage.measure import compare_ssim as ssim
 from tqdm import tqdm
+
+import automatic_seafloor_functions as asf
+
 parser = argparse.ArgumentParser()
 
 #Required Arguments
@@ -49,30 +52,20 @@ def compare_images(target, ref):
     scores.append(ssim(target, ref, multichannel =True))
     return scores
 
-def getfiles(ID='', PFAD='.'):
-    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
-    files = []
-    for file in os.listdir(PFAD):
-        if file.endswith(ID):
-            files.append(str(file))
-    return files
+
 
 
 def intersection(lst1, lst2):
     return list(set(lst1) & set(lst2))
 
-try:
-    args = parser.parse_args()
-except:
-    parser.print_help()
-    sys.exit(0)
+args = asf.parse_args(parser)
 
 args.source_directory.strip("/")
 args.target_directory.strip("/")
 args.out_directory.strip("/")
 
-files_source = getfiles(args.wildcards, args.source_directory)
-files_target = getfiles(args.wildcards, args.target_directory)
+files_source = asf.getfiles(args.wildcards, args.source_directory)
+files_target = asf.etfiles(args.wildcards, args.target_directory)
 
 #get files which are in both lists
 print("Number of source files: ", len(files_source))

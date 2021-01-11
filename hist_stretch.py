@@ -1,15 +1,10 @@
-import matplotlib
-import matplotlib.pyplot as plt
+import argparse
+from sys import exit
+
 import numpy as np
-
-from tqdm import tqdm
-
-from skimage import data, img_as_float
 from skimage import exposure
-from skimage import io 
-
-import argparse 
-
+from skimage import io
+from tqdm import tqdm
 
 """
 Example use 
@@ -28,7 +23,7 @@ try:
     options = PARSER.parse_args()
 except:
     PARSER.print_help()
-    sys.exit(0)
+    exit(0)
 
 args = PARSER.parse_args()
 args.source_directory.strip("/")

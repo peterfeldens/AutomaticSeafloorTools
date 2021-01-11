@@ -7,7 +7,6 @@ Add suffix to filename
 
 
 import argparse
-from tqdm import tqdm
 import os
 import sys
 
@@ -18,7 +17,7 @@ parser.add_argument('wildcards', type=str, help="identifier for Files")
 parser.add_argument('suffix', type=str, help="remove suffix before wildcard")
 
 
-try:
+#TODO
     options = parser.parse_args()
 except:
     parser.print_help()

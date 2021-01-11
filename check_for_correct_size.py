@@ -1,55 +1,41 @@
 #!/usr/bin/env python
 # coding: utf8
-'''
+"""
 Check folder for correct tile size of images and delete those that dont fit
-'''
-
-
+"""
 
 import argparse
-from tqdm import tqdm
 import os
-import sys
+
 from osgeo import gdal
+from tqdm import tqdm
+
+import automatic_seafloor_functions as asf
 
 parser = argparse.ArgumentParser()
-#Required Arguments
+# Required Arguments
 parser.add_argument('directory', type=str, help="Folder with data")
 parser.add_argument('tiles', type=int, help="tile size of images")
 parser.add_argument('wildcards', type=str, help="identifier for Files")
 
-try:
-    options = parser.parse_args()
-except:
-    parser.print_help()
-    sys.exit(0)
-
-args = parser.parse_args()
+args = asf.parse_args(parser)
 args.directory.strip("/")
+
 print("TIF warnings are supressed")
 
-def getfiles(ID='', PFAD='.'):
-    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
-    files = []
-    for file in os.listdir(PFAD):
-        if file.endswith(ID):
-            files.append(str(file))
-    return files
+file_list = asf.getfiles(args.wildcards, args.directory)
 
-
-filelist = getfiles(args.wildcards, args.directory)
-
-counter=0
-for image in tqdm(filelist):
+counter = 0
+for image in tqdm(file_list):
     img = args.directory + '/' + image
     rds = gdal.Open(img)
-    img_width,img_height=rds.RasterXSize,rds.RasterYSize
-    if not img_width==args.tiles:
+    img_width, img_height = rds.RasterXSize, rds.RasterYSize
+    if not img_width == args.tiles:
         cmd = 'rm ' + img
         os.system(cmd)
         counter = counter + 1
-    if not img_height==args.tiles:
+    if not img_height == args.tiles:
         cmd = 'rm ' + img
         os.system(cmd)
-        counter = counter +1
-print("A total of ", counter, " files have been deleted ( ", counter/len(filelist)* 100, " Percent.")
+        counter = counter + 1
+print("A total of ", counter, " files have been deleted ( ", counter / len(file_list) * 100, " Percent.")

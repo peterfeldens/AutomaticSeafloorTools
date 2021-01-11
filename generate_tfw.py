@@ -12,16 +12,6 @@ from tqdm import tqdm
 
 import automatic_seafloor_functions as asf
 
-parser = argparse.ArgumentParser()
-# Required Arguments
-parser.add_argument('directory', type=str, help="Folder with data")
-parser.add_argument('wildcards', type=str, help="identifier for Files")
-parser.add_argument('scale', type=float, help="multiply tfw file by factor for magnfied or shrink images. standard = 1",
-                    default=1)
-parser.add_argument('suffix', type=str, help="suffix for world file. Default is tfw", default='tfw')
-
-num_cores = multiprocessing.cpu_count() - 1
-print("Using ", num_cores, " cores. ")
 
 def generate_tfw(infile, scale_factor=1, suffix='.tfw', gen_prj='prj'):
     src = gdal.Open(infile)
@@ -51,6 +41,17 @@ def generate_tfw(infile, scale_factor=1, suffix='.tfw', gen_prj='prj'):
     tfw.write("%0.8f\n" % edit2)
     tfw.close()
 
+
+parser = argparse.ArgumentParser()
+# Required Arguments
+parser.add_argument('directory', type=str, help="Folder with data")
+parser.add_argument('wildcards', type=str, help="identifier for Files")
+parser.add_argument('scale', type=float, help="multiply tfw file by factor for magnfied or shrink images. standard = 1",
+                    default=1)
+parser.add_argument('suffix', type=str, help="suffix for world file. Default is tfw", default='tfw')
+
+num_cores = multiprocessing.cpu_count() - 1
+print("Using ", num_cores, " cores. ")
 args = asf.parse_args(parser)
 args.directory.strip("/")
 

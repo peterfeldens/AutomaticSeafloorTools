@@ -18,7 +18,7 @@ from tqdm import tqdm
 
 import automatic_seafloor_functions as asf
 # Really crude importing
-from retina_detect_config import *
+from apply_object_detect_config_file import *
 
 
 def main():

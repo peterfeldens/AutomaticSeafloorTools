@@ -1,12 +1,17 @@
-def getfiles(id='', pfad='.'):
-    import os
-    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
-    files = []
-    for file in os.listdir(pfad):
-        if file.endswith(id):
-            files.append(str(file))
-    return files
 
+
+def getfiles(ID='', PFAD='.', rekursive='no'):
+    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
+    import os
+    import glob2
+    files = []
+    if rekursive == 'no':
+        for file in os.listdir(PFAD):
+            if file.endswith(ID):
+                files.append(str(file))
+    if rekursive == 'yes':
+        files = glob2.glob(PFAD + '/**/*' + ID)
+    return files
 
 def parse_args(parser):
     try:

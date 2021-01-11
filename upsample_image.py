@@ -6,11 +6,11 @@ upsample images to create input data for superresolustion training data
 
 import argparse
 import multiprocessing
-import os
-import sys
 
 from joblib import Parallel, delayed
 from tqdm import tqdm
+
+import automatic_seafloor_functions as asf
 
 num_cores = multiprocessing.cpu_count() - 1
 print("Using ", num_cores, " cores. ")
@@ -23,15 +23,6 @@ parser.add_argument('source_directory', type=str, help="Folder with input mosaic
 parser.add_argument('target_directory', type=str, help="Target folder for image files")
 parser.add_argument('factor', type=int, help="upsampling factor")
 parser.add_argument('wildcards', type=str, help="identfiy the files")
-
-
-def getfiles(ID='', PFAD='.'):
-    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
-    files_in_directory = []
-    for file in os.listdir(PFAD):
-        if file.endswith(ID):
-            files_in_directory.append(str(file))
-    return files_in_directory
 
 
 def upsample_image(folder, image_name, factor, target_folder):
@@ -49,16 +40,11 @@ def upsample_image(folder, image_name, factor, target_folder):
     return
 
 
-try:
-    args = parser.parse_args()
-except:
-    parser.print_help()
-    sys.exit(0)
-
+args = asf.parse_args(parser)
 args.source_directory.strip("/")
 args.target_directory.strip("/")
 
-files = getfiles(args.wildcards, args.source_directory)
+files = asf.getfiles(args.wildcards, args.source_directory)
 
 print("Working on ", len(files), "images")
 

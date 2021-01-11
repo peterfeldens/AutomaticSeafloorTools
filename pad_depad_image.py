@@ -1,7 +1,5 @@
 import argparse
 import multiprocessing
-import os
-import sys
 
 import gdal
 import numpy as np
@@ -9,8 +7,10 @@ from joblib import Parallel, delayed
 from osgeo import osr
 from tqdm import tqdm
 
-"""This sscript takes only the first dimension of input images(!) - so only greyscale at the moment - and pads it by 
-zeros at each side. 
+import automatic_seafloor_functions as asf
+
+"""This script takes only the first dimension of input images(!) - so only greyscale at the moment - and pads it by 
+zeros/linear ramp/constant values at each side (hardcoded). 
 
 For RGB images, this likely has to be done for each band separately and then later on merged by gdal (note for later 
 mbes related studies) """
@@ -125,31 +125,17 @@ def write_tile(raster, gt, data_obj, outputpath, dtype=gdal.GDT_UInt16, options=
     dest = None
 
 
-def getfiles(ID='', PFAD='.'):
-    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
-    files = []
-    for file in os.listdir(PFAD):
-        if file.endswith(ID):
-            files.append(str(file))
-    return files
-
-
-try:
-    args = parser.parse_args()
-except:
-    parser.print_help()
-    sys.exit(0)
-
+args = asf.parse_args(parser)
 args.source_directory.strip("/")
 args.target_directory.strip("/")
 
-filelist = getfiles(args.wildcards, args.source_directory)
+file_list = asf.getfiles(args.wildcards, args.source_directory)
 
 if args.pad_or_depad == 'pad':
     Parallel(n_jobs=num_cores)(
         delayed(pad)(args.source_directory, file, ".tif", args.npad, args.target_directory, padval=128) for file in
-        tqdm(filelist))
+        tqdm(file_list))
 if args.pad_or_depad == 'depad':
     Parallel(n_jobs=num_cores)(
         delayed(depad)(args.source_directory, file, ".tif", args.npad, args.target_directory) for file in
-        tqdm(filelist))
+        tqdm(file_list))

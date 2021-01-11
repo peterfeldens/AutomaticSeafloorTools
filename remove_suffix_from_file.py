@@ -1,43 +1,27 @@
 #!/usr/bin/env python
 # coding: utf8
-'''
+"""
 Add suffix to filename
-'''
-
-
+"""
 
 import argparse
 import os
-import sys
+
+from tqdm import tqdm
+
+import automatic_seafloor_functions as asf
 
 parser = argparse.ArgumentParser()
-#Required Arguments
+# Required Arguments
 parser.add_argument('directory', type=str, help="Folder with data")
 parser.add_argument('wildcards', type=str, help="identifier for Files")
 parser.add_argument('suffix', type=str, help="remove suffix before wildcard")
 
+args = asf.parse_args(parser)
 
-#TODO
-    options = parser.parse_args()
-except:
-    parser.print_help()
-    sys.exit(0)
+file_list = asf.getfiles(args.wildcards, args.directory)
 
-args = parser.parse_args()
-args.directory.strip("/")
-
-def getfiles(ID='', PFAD='.'):
-    # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
-    files = []
-    for file in os.listdir(PFAD):
-        if file.endswith(ID):
-            files.append(str(file))
-    return files
-
-
-filelist = getfiles(args.wildcards, args.directory)
-
-for file in tqdm(filelist):
+for file in tqdm(file_list):
     file_base = file.strip(args.wildcards)
     file_base = file_base.strip(args.suffix)
     file_new = file_base + args.wildcards

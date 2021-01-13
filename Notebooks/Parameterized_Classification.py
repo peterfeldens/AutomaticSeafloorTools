@@ -6,32 +6,27 @@ Created on Tue Oct 10 14:37:35 2017
 @author: peter
 """
 
-import pandas as pd
-import numpy as np
 import sys
+
+import numpy as np
+import pandas as pd
+
 sys.path.append('/home/peter/gdrive/dev/Functions')
 sys.path.append('F:\\GoogleDrive\\dev\\Functions')
 import FUNCTIONS_ARRAYS as fa
 
 import matplotlib.pyplot as plt
-import matplotlib
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import Imputer
 from sklearn.model_selection import KFold
-from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from mpl_toolkits.mplot3d import Axes3D #Dont rmeove
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.cluster import MiniBatchKMeans, KMeans
-from sklearn.metrics.pairwise import pairwise_distances_argmin
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.cm as cm
 import os
@@ -473,7 +468,6 @@ if brute_force_feature_selection == 'yes':
 #%%
 # Make a confusion matrix with the chosen parameters
 if cf_matrix == 'yes':
-    from sklearn.metrics import classification_report
     print "Plotte Confusion Matrix"
     for classifier in classifiers:
         """
@@ -549,9 +543,8 @@ if compare_cluster_methods == 'yes':
     import numpy as np
     import matplotlib.pyplot as plt
     
-    from sklearn import cluster, datasets, mixture
+    from sklearn import cluster, mixture
     from sklearn.neighbors import kneighbors_graph
-    from sklearn.preprocessing import StandardScaler
     from itertools import cycle, islice
     
 

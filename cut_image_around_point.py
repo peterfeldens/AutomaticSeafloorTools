@@ -3,7 +3,6 @@ import argparse
 import pandas as pd
 from osgeo import gdal
 from tqdm import tqdm
-
 import automatic_seafloor_functions as asf
 
 parser = argparse.ArgumentParser()
@@ -37,7 +36,7 @@ for tif in file_list:
         bbox = (ulx,uly,lrx,lry)
         #print(bbox)
         input_tif = args.target_directory + "/" + tif
-        output_tif = args.output_directory + "/" + tif +  "_" + str(int(x)) + "_" + str(int(y)) + ".tif"
+        output_tif = args.output_directory + "/" + tif.strip(args.wildcards) +  "_" + str(int(x)) + "_" + str(int(y)) + ".tif"
         gdal.Translate(output_tif, input_tif, projWin = bbox)
 
 

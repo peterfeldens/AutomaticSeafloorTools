@@ -28,7 +28,6 @@ parser.add_argument('target_directory', type=str, help="Target folder for image 
 parser.add_argument('tile_size', type=int, help="size of the squares in pixels")
 parser.add_argument('wildcards', type=str, help="identify the files")
 
-# Optional Arguments: Verbosity displays all commands
 parser.add_argument("-o", "--overlap", type=int, help="number of overlap between pixels", default=0)
 
 

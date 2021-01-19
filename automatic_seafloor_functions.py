@@ -1,4 +1,4 @@
-
+#File system stuff
 
 def getfiles(ID='', PFAD='.', rekursive='no'):
     # Gibt eine Liste mit Dateien in PFAD und der Endung IDENTIFIER aus.
@@ -36,6 +36,8 @@ def get_boundaries(image):
     lry = uly + (src.RasterYSize * yres)
     return ulx, xres, uly, yres, lrx, lry
 
+
+# Texture parameters
 
 def greycomatrix(image, distances=1, angles=[0], levels=31, Symmetrie=1, Normiert=1):
     #Berechnen der Greycomatrix
@@ -212,6 +214,9 @@ def greycoprops(P, prop):
 
 
 
+
+# Geographic functions
+
 def convert_world_file_to_pixel(utm_coord, world_file_name):
     #Nimmt referenzierte Koordinaten, und berechnet Pixel-Koordinaten mit Hilfe des World-Files
     #Structure of a world file:
@@ -318,3 +323,36 @@ def convert_pixel_to_real(image, box):
     box_mean_x = (box_ulx_coord + box_lrx_coord) /2
     box_mean_y = (box_uly_coord + box_lry_coord) /2
     return box_ulx_coord, box_uly_coord, box_lrx_coord, box_lry_coord, box_mean_x, box_mean_y
+
+
+
+def utm_convert(df, X = 'X', Y = 'Y'):
+    import utm
+
+    #Takes a pandas dataframe with latlong coordinated and adds the column UTX and UTMY
+    # Problems with mutlidimensional arrays. alternative:
+    '''
+    import pyproj
+    from pyproj import Proj
+    myProj = Proj("+proj=utm +zone=33U, +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+    df['utmx'],df['utmy'] = myProj(lon_array, lat_array) 
+    '''
+    print('Calculate X')
+    df['UTMX'] = df.apply(
+        lambda x: utm.from_latlon(x['Y'], x['X'])[0], axis = 1 )
+    print('Calculate Y')
+    df['UTMY'] = df.apply(
+        lambda x: utm.from_latlon(x['Y'], x['X'])[1], axis = 1 )
+
+    return df
+
+def utm_convert_to_lalo(df, Zone = 32,  X = 'X', Y = 'Y'):
+    import utm
+
+    #Takes a pandas dataframe with latlong coordinated and adds the column UTX and UTMY
+    print('Calculate X')
+    df['LaLo_X'] = df.apply(
+        lambda x: utm.to_latlon(x['Y'], x['X'])[0], Zone, 'U', axis = 1 )
+    print('Calculate Y')
+    df['LaLo_Y'] = df.apply(
+        lambda x: utm.to_latlon(x['Y'], x['X'])[1], axis = 1 )

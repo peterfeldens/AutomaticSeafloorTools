@@ -9,7 +9,7 @@ Created on Thu Sep 29 14:01:24 2016
 
 Calcualtes texture parameters from a TIF image and stores as ASCII
 
-Add gridding of output files using gmt surface
+
 
 """
 

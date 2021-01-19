@@ -20,9 +20,8 @@ args.target_directory.strip("/")
 # Read files to process
 file_list = asf.getfiles(args.wildcards, args.target_directory)
 
-#Read csv
+# Read csv
 df_bbox = pd.read_csv(args.path_csv)
-
 
 for tif in file_list:
     for row in tqdm(df_bbox.itertuples()):
@@ -32,11 +31,10 @@ for tif in file_list:
         uly = y + args.tile_size
         lrx = x + args.tile_size
         lry = y - args.tile_size
-        #[-projwin ulx uly lrx lry]
-        bbox = (ulx,uly,lrx,lry)
-        #print(bbox)
+        # [-projwin ulx uly lrx lry]
+        bbox = (ulx, uly, lrx, lry)
+        # print(bbox)
         input_tif = args.target_directory + "/" + tif
-        output_tif = args.output_directory + "/" + tif.strip(args.wildcards) +  "_" + str(int(x)) + "_" + str(int(y)) + ".tif"
-        gdal.Translate(output_tif, input_tif, projWin = bbox)
-
-
+        output_tif = args.output_directory + "/" + tif.strip(args.wildcards) + "_" + str(int(x)) + "_" + str(
+            int(y)) + ".tif"
+        gdal.Translate(output_tif, input_tif, projWin=bbox)

@@ -36,7 +36,7 @@ grid_out = args.output_directory + '/' + os.path.basename(args.path_csv) + ".nc"
 if args.unit == "d":
     command = "gmt surface " + args.path_csv + " -I" + str(args.grid_res) + " -R" + region + " -G" + grid_out
     os.system(command)
-if args.unit == "e":
+if args.unit == "m":
     command = "gmt surface " + args.path_csv + " -I" + str(args.grid_res) + "e" + " -R" + region + " -G" + grid_out
     os.system(command)
 

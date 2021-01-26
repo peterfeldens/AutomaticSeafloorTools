@@ -19,7 +19,7 @@ from keras_retinanet import models
 from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
 from shapely.geometry import Point, LineString
 from tqdm import tqdm
-
+import argparse
 import automatic_seafloor_functions as asf
 # Really crude importing
 from apply_object_detect_config_file import *
@@ -30,6 +30,7 @@ parser.add_argument('raster', type=str, help="Folder with data")
 parser.add_argument('block_x', type=int, help="tile size of images")
 parser.add_argument('model_path', type=str, help="identifier for Files")
 
+
 args = asf.parse_args(parser)
 args.directory.strip("/")
 
@@ -37,6 +38,7 @@ raster = args.raster
 block_x = args.block_x
 model_path = args.model_path
 
+""""
 def main():
     # load retinanet model
     model = models.load_model(model_path, backbone_name='resnet50')
@@ -108,7 +110,7 @@ def main():
 
     print(df.head)
     df.to_csv(output, index=None)
-
+"""
 
 def pixel2coord(col, row):
     """Returns global coordinates to pixel center using base-0 raster index"""

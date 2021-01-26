@@ -1,0 +1,1 @@
+awk -F "," '{print $1, $2, $3}' viele_muscheln1_newfocal.txt

@@ -1,5 +1,6 @@
-image_folder = '/media/peter/Daten_1/BalticSeaTraining/tifs/tiles/'
+import os
 
+image_folder = '/media/peter/Daten_1/BalticSeaTraining/tifs/tiles/'
 image_type = '.tif'
 output = './output/AdlerGrund_Test1.csv'
 labels_to_names = {0: 'stone'}

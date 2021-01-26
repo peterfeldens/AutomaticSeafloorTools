@@ -27,14 +27,14 @@ mbgrdviz -I ZTopoRaw.grd &
 #mbotps -A1 -M -V -Idatalist.mb-1
 
 # To test bathymetry recalculation use sound speed model from mbvelocitytool
-mbset -PSVPFILE:20200527_1431.svp
+#mbset -PSVPFILE:20200527_1431.svp
 
 # Set sonar draft
-mbset -PDRAFTOFFSET:0
+mbset -PDRAFTOFFSET:3.8
 
 # Reverse sign of heave data - not sure if the sign error is an error in the data
 # or an error in the code recognizing the convention for this particular data source
-mbset -PHEAVEMULTIPLY:-1
+#mbset -PHEAVEMULTIPLY:-1
 
 # Offset navigation source relative to sonar on platform
 # mbset -PNAVOFFSETX:1.305 -PNAVOFFSETY:0.0

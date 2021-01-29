@@ -19,6 +19,7 @@ import pandas as pd
 from osgeo import gdal
 from shapely import wkt
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
 
@@ -80,7 +81,7 @@ class_names = args.input_classes
 
 print("relate point to mosaic:")
 data = []  # make empty result list
-for i, (database, class_name, table_name) in enumerate(zip(databases, class_names, table_names)):
+for i, (database, class_name, table_name) in tqdm(enumerate(zip(databases, class_names, table_names))):
     print('Working on: ', database, class_name, table_name)
     cn = sqlite3.connect(args.database_directory + '/' + database)
     sql_query = "SELECT * FROM " + table_name
@@ -94,7 +95,7 @@ for i, (database, class_name, table_name) in enumerate(zip(databases, class_name
     image_list = glob.glob(args.image_directory + '/' + '*' + args.wildcards)
 
     results = []
-    for image in image_list:
+    for image in tqdm(image_list):
         ulx, xres, uly, yres, lrx, lry = get_boundaries(image)
         results.append([image, ulx, uly, lrx, lry, xres, yres])
 
@@ -105,7 +106,7 @@ for i, (database, class_name, table_name) in enumerate(zip(databases, class_name
     vector_gdf['classname'] = class_name
 
     # Compare the two data frames
-    for row in vector_gdf.itertuples():
+    for row in tqdm(vector_gdf.itertuples()):
         # bounds return (minx, miny, maxx, maxy)
         idx = row.Index
         minx = float(row.Coordinates.bounds[0])
@@ -123,7 +124,6 @@ for i, (database, class_name, table_name) in enumerate(zip(databases, class_name
             maxx = mean_x + buffer_value / 2
             miny = mean_y - buffer_value / 2
             maxy = mean_y + buffer_value / 2
-            print("Buffer")
 
         image_exists = []
 

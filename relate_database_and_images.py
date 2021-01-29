@@ -81,7 +81,7 @@ class_names = args.input_classes
 
 print("relate point to mosaic:")
 data = []  # make empty result list
-for i, (database, class_name, table_name) in tqdm(enumerate(zip(databases, class_names, table_names))):
+for i, (database, class_name, table_name) in enumerate(zip(databases, class_names, table_names)):
     print('Working on: ', database, class_name, table_name)
     cn = sqlite3.connect(args.database_directory + '/' + database)
     sql_query = "SELECT * FROM " + table_name
@@ -90,10 +90,10 @@ for i, (database, class_name, table_name) in tqdm(enumerate(zip(databases, class
     # Create geopandas
     vector_df['Coordinates'] = vector_df['WKT_GEOMETRY'].apply(wkt.loads)
     vector_gdf = geopandas.GeoDataFrame(vector_df, geometry='Coordinates')
-
+    print("Working on ", len(vector_gdf), "training examples")
     # get image list
     image_list = glob.glob(args.image_directory + '/' + '*' + args.wildcards)
-
+    print("Comparing with ", len(image_list), "images")
     results = []
     for image in image_list:
         ulx, xres, uly, yres, lrx, lry = get_boundaries(image)
@@ -156,6 +156,8 @@ for i, (database, class_name, table_name) in tqdm(enumerate(zip(databases, class
                     {'classname': row.classname, 'imagename': image[1].image, 'minx': minx, 'miny': miny, 'maxx': maxx,
                      'maxy': maxy, 'pixelxmax': pixel_xmax, 'pixelxmin': pixel_xmin, 'pixelymax': pixel_ymax,
                      'pixelymin': pixel_ymin}))
+    print("Found ", len(data), " matches")
+
 
 print("Make annotated csv files")
 df = pd.DataFrame(data)
@@ -164,6 +166,7 @@ df.at[mask, 'minx'] = 99999
 df.at[mask, 'miny'] = 99999
 df.at[mask, 'maxx'] = 99999
 df.at[mask, 'maxy'] = 99999
+
 
 if args.format == 'tfrecord':
     # Reformat for usage with Tensorflow API and no longer Keras Retinanet
@@ -188,24 +191,24 @@ if args.format == 'csv':
 
     df = pd.read_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', sep=',', header=None,
                      names=columns)
-    df.pixelxmax[df.classname == 'empty'] = str()
-    df.pixelymin[df.classname == 'empty'] = str()
-    df.pixelymax[df.classname == 'empty'] = str()
-    df.pixelxmin[df.classname == 'empty'] = str()
-    df.classname[df.classname == 'empty'] = str()
-    print("Head of Train file")
-    print(df.head())
+    #TODO do this with a mask and replace
+    df.pixelxmax[df.classname == 'empty'] = str("")
+    df.pixelymin[df.classname == 'empty'] = str("")
+    df.pixelymax[df.classname == 'empty'] = str("")
+    df.pixelxmin[df.classname == 'empty'] = str("")
+    df.classname[df.classname == 'empty'] = str("")
     df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', header=None, index=None, sep=',',
               columns=columns)
 
     df = pd.read_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', sep=',', header=None,
                      names=columns)
+
     df.pixelxmax[df.classname == 'empty'] = str()
     df.pixelymin[df.classname == 'empty'] = str()
     df.pixelymax[df.classname == 'empty'] = str()
     df.pixelxmin[df.classname == 'empty'] = str()
     df.classname[df.classname == 'empty'] = str()
-    print("Head of Test file")
-    print(df.head())
+
     df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',
               columns=columns)
+

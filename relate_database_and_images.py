@@ -95,7 +95,7 @@ for i, (database, class_name, table_name) in tqdm(enumerate(zip(databases, class
     image_list = glob.glob(args.image_directory + '/' + '*' + args.wildcards)
 
     results = []
-    for image in tqdm(image_list):
+    for image in image_list:
         ulx, xres, uly, yres, lrx, lry = get_boundaries(image)
         results.append([image, ulx, uly, lrx, lry, xres, yres])
 
@@ -106,7 +106,7 @@ for i, (database, class_name, table_name) in tqdm(enumerate(zip(databases, class
     vector_gdf['classname'] = class_name
 
     # Compare the two data frames
-    for row in tqdm(vector_gdf.itertuples()):
+    for row in vector_gdf.itertuples():
         # bounds return (minx, miny, maxx, maxy)
         idx = row.Index
         minx = float(row.Coordinates.bounds[0])
@@ -182,6 +182,7 @@ if args.format == 'csv':
     test.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',
                 columns=columns)
 
+
     # resolve empty classes ..only for retinannet
     columns = ['imagename', 'pixelxmin', 'pixelymin', 'pixelxmax', 'pixelymax', 'classname']
 
@@ -192,6 +193,8 @@ if args.format == 'csv':
     df.pixelymax[df.classname == 'empty'] = str()
     df.pixelxmin[df.classname == 'empty'] = str()
     df.classname[df.classname == 'empty'] = str()
+    print("Head of Train file")
+    print(df.head())
     df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', header=None, index=None, sep=',',
               columns=columns)
 
@@ -202,5 +205,7 @@ if args.format == 'csv':
     df.pixelymax[df.classname == 'empty'] = str()
     df.pixelxmin[df.classname == 'empty'] = str()
     df.classname[df.classname == 'empty'] = str()
+    print("Head of Test file")
+    print(df.head())
     df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',
               columns=columns)

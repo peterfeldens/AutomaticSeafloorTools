@@ -34,6 +34,8 @@ parser.add_argument('--input_classes', action='append',
 parser.add_argument('--out_directory', help='<Output directory')
 parser.add_argument("-f", "--format", type=str,
                     help="Output format of annotation file. Possible values are csv and tfrecord", default='csv')
+parser.add_argument("-e", "--empty_examples", type=int,
+                    help="Set to 1 if training data include an 'empty' class, for reformatting of csv for this class", default=0)
 
 appendix_for_annotation_file = 'annotation_20pix_stone_'
 
@@ -41,6 +43,8 @@ appendix_for_annotation_file = 'annotation_20pix_stone_'
 # NOTICE the classname empty is special. This is assumed to be just points, not rectangles (so it is easier to
 # dogotize negative image examples), and will be buffered by a few pixels, with coordinates later removed as required
 # by retina net
+# We are using emoty-state = 42
+
 
 
 def get_boundaries(image_tile):
@@ -64,7 +68,7 @@ except:
 args.image_directory.strip("/")
 args.database_directory.strip("/")
 args.out_directory.strip("/")
-
+include_empty_examples = args.empty_examples
 # Get Table name from file names
 print(args.input_databases)
 table_names = []
@@ -179,7 +183,7 @@ if args.format == 'csv':
     columns = ['imagename', 'pixelxmin', 'pixelymin', 'pixelxmax', 'pixelymax', 'classname']
 
     # Export Test and Train sets
-    train, test = train_test_split(df, test_size=0.2)
+    train, test = train_test_split(df, test_size=0.2, random_state=42)
     train.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', header=None, index=None,
                  sep=',', columns=columns)
     test.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',
@@ -187,28 +191,29 @@ if args.format == 'csv':
 
 
     # resolve empty classes ..only for retinannet
-    columns = ['imagename', 'pixelxmin', 'pixelymin', 'pixelxmax', 'pixelymax', 'classname']
+    if include_empty_examples == 1:
+        columns = ['imagename', 'pixelxmin', 'pixelymin', 'pixelxmax', 'pixelymax', 'classname']
 
-    df = pd.read_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', sep=',', header=None,
-                     names=columns)
-    #TODO do this with a mask and replace
-    df.pixelxmax[df.classname == 'empty'] = str("")
-    df.pixelymin[df.classname == 'empty'] = str("")
-    df.pixelymax[df.classname == 'empty'] = str("")
-    df.pixelxmin[df.classname == 'empty'] = str("")
-    df.classname[df.classname == 'empty'] = str("")
-    df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', header=None, index=None, sep=',',
-              columns=columns)
+        df = pd.read_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', sep=',', header=None,
+                         names=columns)
+        #TODO do this with a mask and replace
+        df.pixelxmax[df.classname == 'empty'] = str("")
+        df.pixelymin[df.classname == 'empty'] = str("")
+        df.pixelymax[df.classname == 'empty'] = str("")
+        df.pixelxmin[df.classname == 'empty'] = str("")
+        df.classname[df.classname == 'empty'] = str("")
+        df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', header=None, index=None, sep=',',
+                  columns=columns)
 
-    df = pd.read_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', sep=',', header=None,
-                     names=columns)
+        df = pd.read_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', sep=',', header=None,
+                         names=columns)
 
-    df.pixelxmax[df.classname == 'empty'] = str()
-    df.pixelymin[df.classname == 'empty'] = str()
-    df.pixelymax[df.classname == 'empty'] = str()
-    df.pixelxmin[df.classname == 'empty'] = str()
-    df.classname[df.classname == 'empty'] = str()
+        df.pixelxmax[df.classname == 'empty'] = str()
+        df.pixelymin[df.classname == 'empty'] = str()
+        df.pixelymax[df.classname == 'empty'] = str()
+        df.pixelxmin[df.classname == 'empty'] = str()
+        df.classname[df.classname == 'empty'] = str()
 
-    df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',
-              columns=columns)
+        df.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',
+                  columns=columns)
 

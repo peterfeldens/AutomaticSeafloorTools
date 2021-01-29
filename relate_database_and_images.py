@@ -10,6 +10,7 @@ import argparse
 import glob
 import sqlite3
 import sys
+from typing import List, Any, Union
 
 import gdal
 import geopandas
@@ -88,6 +89,7 @@ for i, (database, class_name, table_name) in enumerate(zip(databases, class_name
     # Create geopandas
     vector_df['Coordinates'] = vector_df['WKT_GEOMETRY'].apply(wkt.loads)
     vector_gdf = geopandas.GeoDataFrame(vector_df, geometry='Coordinates')
+
     # get image list
     image_list = glob.glob(args.image_directory + '/' + '*' + args.wildcards)
 

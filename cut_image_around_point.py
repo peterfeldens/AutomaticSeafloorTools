@@ -4,7 +4,7 @@ import pandas as pd
 from osgeo import gdal
 from tqdm import tqdm
 import automatic_seafloor_functions as asf
-
+#TODO make this accept sqlite Input, so there does not need to be an extra export of the database during training
 parser = argparse.ArgumentParser()
 
 parser.add_argument('path_csv', type=str, help="Path to csv with points in columns named X and Y ")

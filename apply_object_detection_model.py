@@ -11,38 +11,52 @@ It is much faster though.
 """
 # import keras
 
+import argparse
 import glob
 
-import gdal
-import geopandas as gpd
 import numpy as np
 import pandas as pd
-import shapely.geometry as geom
 # import miscellaneous modules
 # set tf backend to allow memory to grow, instead of claiming everything
 # import keras_retinanet
 from keras_retinanet import models
 from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
-from shapely.geometry import Point, LineString
 from tqdm import tqdm
-import argparse
+
 import automatic_seafloor_functions as asf
-# Really crude importing
-from apply_object_detect_config_file import *
 
 parser = argparse.ArgumentParser()
 # Required Arguments
 parser.add_argument('raster', type=str, help="Folder with data")
-parser.add_argument('block_x', type=int, help="tile size of images")
 parser.add_argument('model_path', type=str, help="identifier for Files")
+parser.add_argument('output', type=str, help="Path and name of result")
 
+parser.add_argument("-f", "--format", type=str,
+                    help="Format of image tiles", default='tif')
+parser.add_argument("-m", "--minside", type=int,
+                    help="Image size minimum side", default=800)
+parser.add_argument("-d", "--detection_threshold", type=float,
+                    help="Minimum score reported", default=0.2)
+parser.add_argument("-b", "--boundary_threshold", type=float,
+                    help="Stones closer together will be merged", default=0.5)
+
+labels_to_names = {0: 'stone'}
 
 args = asf.parse_args(parser)
 args.directory.strip("/")
 
-raster = args.raster
-block_x = args.block_x
+# main1
+image_folder = args.raster
+image_type = args.format
 model_path = args.model_path
+min_side = args.minside
+output = args.output
+detection_threshold = args.detect_threshold  # include detections with accuracy above
+boundary_threshold = args.boundary_threshold  # Stones smaller together will be merged
+# all
+
+
+convert_model = 'yes'
 
 
 def main():
@@ -115,9 +129,7 @@ def main():
     df['Area_bounding_box'] = np.abs((df.uly - df.lry)) * np.abs((df.ulx - df.lrx))
 
     print(df.head)
-    df.to_csv(output, index=None)
+    df.to_csv(output, index=False)
 
 
 main()
-
-

@@ -28,7 +28,7 @@ import automatic_seafloor_functions as asf
 parser = argparse.ArgumentParser()
 # Required Arguments
 parser.add_argument('raster', type=str, help="Folder with data")
-parser.add_argument('model_path', type=str, help="identifier for Files")
+parser.add_argument('model_path', type=str, help="Path to model file")
 parser.add_argument('output', type=str, help="Path and name of result")
 
 parser.add_argument("-f", "--format", type=str,
@@ -43,7 +43,8 @@ parser.add_argument("-b", "--boundary_threshold", type=float,
 labels_to_names = {0: 'stone'}
 
 args = asf.parse_args(parser)
-args.directory.strip("/")
+args.raster.strip("/")
+
 
 # main1
 image_folder = args.raster

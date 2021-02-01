@@ -113,7 +113,7 @@ tmp = get_distance(tmp)  # the non-parallel execution
 print("Sorting Values")
 tmp = tmp.sort_values(['pt_idx', 'min_dist'], ascending=[True, True]).drop_duplicates('pt_idx').sort_index()
 tmp['normalized_dist'] = (tmp['min_dist'] - tmp['min_dist'].min()) / (
-        tmp['min_dist'].max() - tmp['min_dist'].min()) * 255
+        120 - tmp['min_dist'].min()) * 255
 
 # Gridding and exporting
 xypoints = tmp['point'].centroid

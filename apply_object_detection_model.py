@@ -52,7 +52,7 @@ image_type = args.format
 model_path = args.model_path
 min_side = args.minside
 output = args.output
-detection_threshold = args.detect_threshold  # include detections with accuracy above
+detection_threshold = args.detection_threshold  # include detections with accuracy above
 boundary_threshold = args.boundary_threshold  # Stones smaller together will be merged
 # all
 

@@ -37,8 +37,7 @@ parser.add_argument("-m", "--minside", type=int,
                     help="Image size minimum side", default=800)
 parser.add_argument("-d", "--detection_threshold", type=float,
                     help="Minimum score reported", default=0.2)
-parser.add_argument("-b", "--boundary_threshold", type=float,
-                    help="Stones closer together will be merged", default=0.5)
+
 
 labels_to_names = {0: 'stone'}
 
@@ -53,7 +52,6 @@ model_path = args.model_path
 min_side = args.minside
 output = args.output
 detection_threshold = args.detection_threshold  # include detections with accuracy above
-boundary_threshold = args.boundary_threshold  # Stones smaller together will be merged
 # all
 
 
@@ -97,7 +95,7 @@ def main():
 
             results.append(dict(
                 {'image': img, 'class': label, 'score': score, 'ulx': box_ulx_coord, 'uly': box_uly_coord,
-                 'lrx': box_lrx_coord, 'lry': box_lry_coord, 'x': box_mean_x, 'y': box_mean_y, 'WKT': str(
+                 'lrx': box_lrx_coord, 'lry': box_lry_coord, 'X': box_mean_x, 'Y': box_mean_y, 'WKT': str(
                     'POLYGON ((' + str(box_ulx_coord) + ' ' + str(box_uly_coord) + ',' + str(box_ulx_coord) + ' ' + str(
                         box_lry_coord) + ',' + str(box_lrx_coord) + ' ' + str(box_lry_coord) + ',' + str(
                         box_lrx_coord) + ' ' + str(box_uly_coord) + ',' + str(box_ulx_coord) + ' ' + str(
@@ -105,26 +103,6 @@ def main():
 
     # wegschreiben
     df = pd.DataFrame(results)
-
-    print('Entferne Koordinaten mit Entfernunge < als: ', boundary_threshold)
-    merge_list = []
-    for row in df.itertuples():
-        # bounds return (minx, miny, maxx, maxy)
-        x = row.x
-        y = row.y
-        near_points = df[
-            (np.abs(df.x.values - x) < boundary_threshold) & (np.abs(df.y.values - y) < boundary_threshold)].index
-        merge_list.append(near_points)
-
-        # df.loc[merge_list[element]].agg({'class':'mean', 'lrx':'mean'}) # so koennte man die Mittelwerte ausrechnen
-    # quick and dirtz: delete all antries except first
-    for element in merge_list:
-        to_del = element[1:]
-        try:
-            df.drop(labels=to_del, inplace=True)
-        except Exception as ex:
-            print(ex)
-            continue
 
     print("Berechne bounding box Fläche unter der Annahme vom projizierten Koordinates")
     df['Area_bounding_box'] = np.abs((df.uly - df.lry)) * np.abs((df.ulx - df.lrx))

@@ -9,11 +9,10 @@ import multiprocessing
 import os
 
 import numpy as np
-import skimage
 from joblib import Parallel, delayed
 from tqdm import tqdm
-
 import automatic_seafloor_functions as asf
+from PIL import Image
 
 num_cores = multiprocessing.cpu_count() - 1
 print("Using ", num_cores, " cores. ")
@@ -31,13 +30,15 @@ args.source_directory.strip("/")
 
 files = asf.getfiles(args.wildcards, args.source_directory)
 print('Working on ', len(files), ' files.')
+orig = len(files)
 
-
-def delete_white(file):
-    img = skimage.io.imread(args.source_directory + '/' + file, as_gray=True)
+def delete_white(file, folder):
+    img = np.asarray(Image.open(folder + "/" + file))
     if np.mean(img) > args.threshold:
         cmd = 'rm' + '  ' + args.source_directory + '/' + file
         os.system(cmd)
 
+after = len(files)
+Parallel(n_jobs=num_cores)(delayed(delete_white)(file, args.source_directory) for file in tqdm(files))
 
-Parallel(n_jobs=num_cores)(delayed(delete_white)(file) for file in tqdm(files))
+print(orig - after, " files of ", orig, " have been deleted.")

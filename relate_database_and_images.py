@@ -183,7 +183,7 @@ if args.format == 'csv':
     columns = ['imagename', 'pixelxmin', 'pixelymin', 'pixelxmax', 'pixelymax', 'classname']
 
     # Export Test and Train sets
-    train, test = train_test_split(df, test_size=0.2, random_state=42)
+    train, test = train_test_split(df, test_size=0.1, random_state=42)
     train.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'train.csv', header=None, index=None,
                  sep=',', columns=columns)
     test.to_csv(args.out_directory + '/' + appendix_for_annotation_file + 'test.csv', header=None, index=None, sep=',',

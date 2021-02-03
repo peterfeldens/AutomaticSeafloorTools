@@ -37,7 +37,7 @@ parser.add_argument("-f", "--format", type=str,
 parser.add_argument("-e", "--empty_examples", type=int,
                     help="Set to 1 if training data include an 'empty' class, for reformatting of csv for this class", default=0)
 
-appendix_for_annotation_file = 'annotation_20pix_stone_'
+appendix_for_annotation_file = 'annotation_stone_'
 
 
 # NOTICE the classname empty is special. This is assumed to be just points, not rectangles (so it is easier to

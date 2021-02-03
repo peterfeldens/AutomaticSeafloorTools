@@ -1,5 +1,3 @@
-import math
-
 cpdef list pixel_coord_fast(double xres, double yres, double ulx, double uly, double[:, :] pixel_coordinates_x, double[:, :] pixel_coordinates_y):
      # set the variable extension types
      cdef double xp, yp
@@ -20,8 +18,7 @@ cpdef list pixel_coord_fast(double xres, double yres, double ulx, double uly, do
 
 
 
-     # die beiden arrays stacken, doer bei ausgeben
+     # die beiden arrays stacken
      test = [pixel_coordinates_y, pixel_coordinates_x]
-     # return the thresholded image
      return test
 

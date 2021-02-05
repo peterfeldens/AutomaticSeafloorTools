@@ -52,27 +52,27 @@ for mosaic in files:
 print("NOTICE: ALL input images must have the same number of bands NOTICE")
 print("Split the dataset if required or convert all to greyscale")
 skipped_files = []
-for mosaic in tqdm(files):
-    try:
-        if args.overlap == 0:
-            print("No overlap")
-            cmd = 'gdal_retile.py -ps ' + str(args.tile_size) + ' ' + str(args.tile_size) + ' -targetDir ' + \
-                  '"' + args.target_directory + '"' + ' ' + '"' + \
-                  args.source_directory + '/' + mosaic + '"'
-            # os.system(cmd)
-            Parallel(n_jobs=num_cores)(delayed(execute_command)(str(cmd))
-                                       for file in tqdm(files))
-        if args.overlap > 0:
-            print("Cutting with Overlap")
-            cmd = 'gdal_retile.py -ps ' + str(args.tile_size) + ' ' + str(args.tile_size) + ' -overlap ' + str(
-                args.overlap) + ' -targetDir ' + '"' + args.target_directory + '"' + ' ' + '"' + args.source_directory + '/' + mosaic + '"'
-            # os.system(cmd)
-            Parallel(n_jobs=num_cores)(delayed(execute_command)(str(cmd))
-                                       for file in tqdm(files))
 
-    except Exception as ex:
-        print(ex)
-        skipped_files.append(mosaic)
+try:
+    if args.overlap == 0:
+        print("No overlap")
+        cmd = 'gdal_retile.py -ps ' + str(args.tile_size) + ' ' + str(args.tile_size) + ' -targetDir ' + \
+              '"' + args.target_directory + '"' + ' ' + '"' + \
+              args.source_directory + '/' + mosaic + '"'
+        # os.system(cmd)
+        Parallel(n_jobs=num_cores)(delayed(execute_command)(str(cmd))
+                                   for file in tqdm(files))
+    if args.overlap > 0:
+        print("Cutting with Overlap")
+        cmd = 'gdal_retile.py -ps ' + str(args.tile_size) + ' ' + str(args.tile_size) + ' -overlap ' + str(
+            args.overlap) + ' -targetDir ' + '"' + args.target_directory + '"' + ' ' + '"' + args.source_directory + '/' + mosaic + '"'
+        # os.system(cmd)
+        Parallel(n_jobs=num_cores)(delayed(execute_command)(str(cmd))
+                                   for file in tqdm(files))
+
+except Exception as ex:
+    print(ex)
+    skipped_files.append(mosaic)
 
 # print list of files that did not work for further investigation
 if skipped_files:

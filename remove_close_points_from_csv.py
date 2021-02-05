@@ -27,7 +27,7 @@ for row in df.itertuples():
     y = row.Y
     near_points = df[
         (np.abs(df.X.values - x) < boundary_threshold) & (np.abs(df.Y.values - y) < boundary_threshold)].index
-    merge_list.append(near_points)
+    merge_list.append([near_points])
 
 # quick and dirtz: delete all antries except first
 for element in merge_list:

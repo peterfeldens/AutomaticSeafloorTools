@@ -31,7 +31,7 @@ for row in df.itertuples():
 
 # quick and dirtz: delete all antries except first
 for element in merge_list:
-    to_del = element[1:]
+    to_del = element[1:]  #TODO Filter by score and keep the highest score instrad of the first element
     try:
         df = df.drop(labels=to_del)
     except Exception as ex:

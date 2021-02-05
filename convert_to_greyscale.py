@@ -43,7 +43,7 @@ def make_grey(args, image):
             # os.system(cmd)
 
         if src_ds.RasterCount > 1:
-            cmd = 'gdal_translate -q -of tif -b 1 ' + img_in + ' ' + img_out
+            cmd = 'gdal_translate -q -of GTiff -b 1 ' + img_in + ' ' + img_out
             # Could theorethically also be ddone with gdal_calc for mor flexibility cmd = 'gdal_calc.py -R ' + img_in
             # + ' --R_band=1 -G ' + img_in + ' --G_band=2 -B ' + img_in + ' --B_band=3 --outfile=' + img_out + '
             # --calc=\"(R+G+B)/3\"'

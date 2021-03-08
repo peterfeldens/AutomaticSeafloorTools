@@ -35,12 +35,7 @@ def make_grey(args, image):
         img_out = args.target_directory + '/' + args.tag + image
 
         if src_ds.RasterCount == 1:
-            # cmd = 'cp ' + img_in + ' ' + img_out
-            # os.system(cmd)
-            print('This image only contained one band and was copied:'), image
-            # if args.overwrite:
-            # cmd ='mv ' + img_out + ' ' + img_in
-            # os.system(cmd)
+            pass
 
         if src_ds.RasterCount > 1:
             cmd = 'gdal_translate -q -of GTiff -b 1 ' + img_in + ' ' + img_out

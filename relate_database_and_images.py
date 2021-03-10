@@ -11,7 +11,7 @@ import glob
 import sqlite3
 import sys
 from typing import List, Any, Union
-
+import cv2
 import gdal
 import geopandas
 import numpy as np
@@ -33,7 +33,7 @@ parser.add_argument('--input_classes', action='append',
                     help='<Required> Specify which class is stored in each database. Order is important')
 parser.add_argument('--out_directory', help='<Output directory')
 parser.add_argument("-f", "--format", type=str,
-                    help="Output format of annotation file. Possible values are csv and tfrecord", default='csv')
+                    help="Output format of annotation file. Possible values are csv and tfrecord", default='retina')
 parser.add_argument("-e", "--empty_examples", type=int,
                     help="Set to 1 if training data include an 'empty' class, for reformatting of csv for this class", default=0)
 
@@ -177,7 +177,39 @@ if args.format == 'tfrecord':
     print("Export as tfrecord not currently implemented here...this code sits in one of the Google Colabs")
     sys.exit(0)
 
-if args.format == 'csv':
+
+if args.format == 'yolo':
+    def convert(size, box):  #need relative extensions
+        dw = 1./(size[1])
+        dh = 1./(size[0])
+        x = (box[0] + box[1])/2.0 - 1
+        y = (box[2] + box[3])/2.0 - 1
+        w = box[1] - box[0]
+        h = box[3] - box[2]
+        x = x*dw
+        w = w*dw
+        y = y*dh
+        h = h*dh
+        return (x,y,w,h)
+    if include_empty_examples == 1:
+        print('Empty examples only supported for retina file format')
+        sys.exit(0)
+    columns = ['classname', 'x_center_norm', 'y_center_norm', 'width_norm', 'height_norm']
+    unique_filenames = df.imagename.unique()
+    unique_classnames = df.classname.unique()
+
+    for img in unique_filenames: ##TODO: classnames are hardcoded...only works for stones
+        temp = df.loc[df['imagename'] == img]
+        im = cv2.imread(img)
+        h, w, c = im.shape
+        temp[['x_center_norm', 'y_center_norm', 'width_norm', 'height_norm']] = [convert([h,w], box)  for box in zip(temp.pixelxmin,temp.pixelxmax, temp.pixelymin, temp.pixelymax)]
+        temp.classname = 0 #!!!!!!!!
+        title, ext = os.path.splitext(os.path.basename(img))# !
+        temp.to_csv(args.out_directory + '/' + title +'.txt', header=None, index=None, sep=' ',
+                    columns=columns)
+
+
+if args.format == 'retina':
     # Reformat for usage with Tensorflow API and no longer Keras Retinanet
 
     columns = ['imagename', 'pixelxmin', 'pixelymin', 'pixelxmax', 'pixelymax', 'classname']

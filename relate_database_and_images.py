@@ -13,6 +13,7 @@ import sys
 from typing import List, Any, Union
 import cv2
 import gdal
+import os
 import geopandas
 import numpy as np
 import pandas as pd

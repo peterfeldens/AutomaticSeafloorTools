@@ -17,15 +17,9 @@ def random_distribution(source_folder, target_folder, valid_percentage=0.2):
     import shutil
 
     filelist = os.listdir(source_folder)
-
     number_of_files = len(filelist)
-    print(number_of_files)
-
     index_of_files = range(0, number_of_files - 1)
-    print(index_of_files)
-
     number_of_valid_files = int(number_of_files * valid_percentage)
-
     random_files_index = random.sample(index_of_files, number_of_valid_files)
     for i in tqdm(random_files_index):
         shutil.move(source_folder + '/' + filelist[i], target_folder + '/' + filelist[i])

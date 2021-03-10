@@ -7,7 +7,7 @@ Create tf datasets from the training and validation image folders
 import argparse
 import multiprocessing
 import os
-
+from PIL import Image
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
@@ -15,8 +15,9 @@ import automatic_seafloor_functions as asf
 
 
 def make_png(directory, image):
-    cmd = 'mogrify -quiet -format png ' + '"' + directory + '/' + image + '"'
-    os.system(cmd)
+    im = Image.open(os.path.join(directory, image))
+    outfile, ext = os.path.splitext(os.path.basename(image))#
+    im.save(directory + '/' + outfile + '.jpg', "JPEG", quality=100)
     return
 
 

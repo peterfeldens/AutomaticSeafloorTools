@@ -192,9 +192,7 @@ if args.format == 'yolo':
         y = y*dh
         h = h*dh
         return (x,y,w,h)
-    if include_empty_examples == 1:
-        print('Empty examples only supported for retina file format')
-        sys.exit(0)
+
     columns = ['classname', 'x_center_norm', 'y_center_norm', 'width_norm', 'height_norm']
     unique_filenames = df.imagename.unique()
     unique_classnames = df.classname.unique()
@@ -208,7 +206,9 @@ if args.format == 'yolo':
         title, ext = os.path.splitext(os.path.basename(img))# !
         temp.to_csv(args.out_directory + '/' + title +'.txt', header=None, index=None, sep=' ',
                     columns=columns)
-
+    if include_empty_examples == 1:
+        print('Empty examples only supported for retina file format')
+        sys.exit(0)
 
 if args.format == 'retina':
     # Reformat for usage with Tensorflow API and no longer Keras Retinanet

@@ -20,7 +20,7 @@ except:
 def f(img, x, y):
     im = cv2.imread(img)
     h, w, c = im.shape
-    ulx, xres, uly, yres, lrx, lry = get_boundaries(img)
+    ulx, xres, uly, yres, lrx, lry = asf.get_boundaries(img)
 
     Pixel_X = x * w
     Pixel_Y = y * h
@@ -78,18 +78,6 @@ def flatten_nested_json_df(dataframe):
     print(f"final shape: {dataframe.shape}")
     print(f"final columns: {dataframe.columns}")
     return dataframe
-
-
-def get_boundaries(image_tile):
-    """
-    Bestimmen der Bildgrenzen
-    """
-    src = gdal.Open(image_tile)
-    ulx, xres, xskew, uly, yskew, yres = src.GetGeoTransform()
-    lrx = ulx + (src.RasterXSize * xres)
-    lry = uly + (src.RasterYSize * yres)
-    return ulx, xres, uly, yres, lrx, lry
-
 
 df = pd.read_json(args.directory)
 df = df[df['objects'].map(lambda d: len(d)) > 0]  # Filter empty lists

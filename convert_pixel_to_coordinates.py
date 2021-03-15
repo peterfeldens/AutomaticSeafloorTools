@@ -33,10 +33,11 @@ if args.create_tfw:
     print("Create the tfw files using this command")
     print(cmd)
 
-
-df = pd.read_csv(csv_path, names=['image_path', 'classname', 'x1', 'y1', 'x2', 'y2' ])
+# filename,width,height,class,xmin,ymin,xmax,ymax
+df = pd.read_csv(csv_path, names=['image_path', 'w', 'h', 'classname', 'x1', 'y1', 'x2', 'y2' ], skiprows=1, )
 
 df[['x1_coord','y1_coord', 'x2_coord', 'y2_coord', 'box_mean_x', 'box_mean_y']] = [asf.convert_pixel_to_real(img, box) for img, box in zip(df['image_path'], zip(df.x1, df.y1, df.x2, df.y2))]
+
 
 #df[['x1_coord','y1_coord', 'x2_coord', 'y2_coord', 'box_mean_x', 'box_mean_y']] = df.result.str.split(",",expand=True,)
 

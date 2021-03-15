@@ -3,8 +3,8 @@
 ##############################################################
 # Control which levels are worked on
 LEVEL1 = 'yes'
-LEVEL2 = 'yes'
-LEVEL3 = 'yes'
+LEVEL2 = 'no'
+LEVEL3 = 'no'
 
 ####IMPORTANT NOTE
 # To allow for the handling of the mb-system scheme for marking processed files
@@ -12,9 +12,9 @@ LEVEL3 = 'yes'
 ####IMPORTANT NOTE
 
 remove_lock_files = 'yes' #Yes tries to remove lockfiles for all files linked in the datalists via mblist
-PFAD = "/Users/peter/temp/"
+PFAD = "/Users/peter/TeamDropbox/Paper/DeepLearning/2021_multidimensional/data/bsh_dataset_mbes"
 rekursive_directory_search = 'no'
-PREPROCESS = 'no'
+PREPROCESS = 'yes'
 FORMAT = 89  # .ALL UND .S7K FILES  work
 file_end = '.s7k'
 SS_FORMAT = 'S'  # scbw  s snippet c calib. snippet b widebeambackscatter w calibwidebeambackscatter "auto" - no option
@@ -22,7 +22,7 @@ SS_FORMAT = 'S'  # scbw  s snippet c calib. snippet b widebeambackscatter w cali
 AREA = '10.729/10.757/54.50/54.55'
 #AREA = '10/12/54/55' #WESN. printed in datalist.info at the end of level1
 GENERATE_DATALIST = 'no'
-AUTO_CLEAN_BATHY = 'yes'
+AUTO_CLEAN_BATHY = 'no'
 auto_clean_with_area_boundaries = 'no'
 ATTITUDE_LAG = ''
 SELECT_SVP = ''          # mbsvpselect crashing at the moment why?? -> mbsystem bug? has to be done manually atm
@@ -37,7 +37,7 @@ DRAFT_CORR = 0.0
 INVERT_HEAVE = 'no' #this was reported to be sometimes wrong for NORBIT data
 
 
-EXPORT_NAV = 'no'           # Export Navigation information and stores under profile file name
+EXPORT_NAV = 'yes'           # Export Navigation information and stores under profile file name
 EXPORT_INFO_LEVEL1 = 'no'   # write output of mbinfo to datalist.info (.e.g, for region boundaries)
 ##############################################################
 # LEVEL 2: Correct Backscatter Data

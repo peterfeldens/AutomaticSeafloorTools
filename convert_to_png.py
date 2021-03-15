@@ -17,7 +17,7 @@ import automatic_seafloor_functions as asf
 def make_png(directory, image):
     im = Image.open(os.path.join(directory, image))
     outfile, ext = os.path.splitext(os.path.basename(image))#
-    im.save(directory + '/' + outfile + '.jpg', "JPEG", quality=100)
+    im.save(directory + '/' + outfile + '.png', "PNG", quality=100)
     return
 
 

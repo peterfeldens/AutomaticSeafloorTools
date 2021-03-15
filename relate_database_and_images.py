@@ -34,7 +34,7 @@ parser.add_argument('--input_classes', action='append',
                     help='<Required> Specify which class is stored in each database. Order is important')
 parser.add_argument('--out_directory', help='<Output directory')
 parser.add_argument("-f", "--format", type=str,
-                    help="Output format of annotation file. Possible values are csv and tfrecord", default='retina')
+                    help="Output format of annotation file. Possible values are csv, yolo and tfrecord", default='retina')
 parser.add_argument("-e", "--empty_examples", type=int,
                     help="Set to 1 if training data include an 'empty' class, for reformatting of csv for this class", default=0)
 
@@ -206,9 +206,7 @@ if args.format == 'yolo':
         title, ext = os.path.splitext(os.path.basename(img))# !
         temp.to_csv(args.out_directory + '/' + title +'.txt', header=None, index=None, sep=' ',
                     columns=columns)
-    if include_empty_examples == 1:
-        print('Empty examples only supported for retina file format')
-        sys.exit(0)
+
 
 if args.format == 'retina':
     # Reformat for usage with Tensorflow API and no longer Keras Retinanet

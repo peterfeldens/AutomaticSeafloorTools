@@ -80,7 +80,7 @@ def flatten_nested_json_df(dataframe):
     return dataframe
 
 df = pd.read_json(args.directory)
-df = df[df['objects'].map(lambda d: len(d)) > 0]  # Filter empty lists
+df = df[df['objects'].map(lambda d: len(d)) > 0]  # Filter empty rows, otherwise its not correctly expanded
 df = flatten_nested_json_df(df)
 print(df.head())
 

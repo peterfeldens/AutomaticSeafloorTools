@@ -4,6 +4,7 @@ import cv2
 import automatic_seafloor_functions as asf
 import argparse
 import sys
+import os
 
 parser = argparse.ArgumentParser()
 
@@ -17,23 +18,26 @@ except:
     parser.print_help()
     sys.exit(0)
 
-def f(img, x, y):
+def f(img, x, y, rel_w, rel_h):
     im = cv2.imread(img)
     h, w, c = im.shape
     ulx, xres, uly, yres, lrx, lry = asf.get_boundaries(img)
-
+    proj = asf.get_projection(img)
     Pixel_X = x * w
     Pixel_Y = y * h
 
-    X = Pixel_X * xres + ulx
-    Y = Pixel_Y * yres - uly
+    X = ulx + Pixel_X * xres
+    Y = uly + (Pixel_Y * yres)  #yres ist negativ
 
-    y1 = Y - (h*yres)
-    x1 = X - (w*xres)
-    x2 = X + (w*xres)
-    y2 = Y + (h*yres)
+    H = rel_h * h * yres
+    W = rel_w * w * xres
 
-    return x1, y1, x2, y2
+    y1 = Y + (H/2) #yres ist negativ
+    x1 = X - (W/2)
+    x2 = X + (W/2) #yres ist negativ
+    y2 = Y - (H/2)
+
+    return X,Y,x1, y1, x2, y2, proj
 
 
 def flatten_nested_json_df(dataframe):
@@ -84,13 +88,13 @@ df = df[df['objects'].map(lambda d: len(d)) > 0]  # Filter empty rows, otherwise
 df = flatten_nested_json_df(df)
 print(df.head())
 
-df[['x1','y1', 'x2', 'y2']] = [f(img, x, y) for img, x,y in zip(df['filename'], df['objects.relative_coordinates.center_x'], df['objects.relative_coordinates.center_y'])]
-df[['x1_coord','y1_coord', 'x2_coord', 'y2_coord', 'box_mean_x', 'box_mean_y']] = [asf.convert_pixel_to_real(img, box) for img, box in zip(df['filename'], zip(df.x1, df.y1, df.x2, df.y2))]
+df['tifname'] = [os.path.splitext(filename)[0] + '.tif'  for filename in df['filename']]
+df[['X', 'Y','x1','y1', 'x2', 'y2', 'proj']] = [f(img, x, y, rel_x, rel_w) for img, x,y, rel_x, rel_w in zip(df['tifname'], df['objects.relative_coordinates.center_x'], df['objects.relative_coordinates.center_y'], df['objects.relative_coordinates.width'], df['objects.relative_coordinates.height'])]
 
 df['wkt'] =  [str('POLYGON ((' + str(x1) + ' ' + str(y1) + ',' + str(x1) + ' ' +
                   str(y2) + ',' + str(x2) + ' ' + str(y2) + ',' +
                   str(x2) + ' ' + str(y1) + ',' + str(x1) + ' ' +
-                  str(y1) + '))') for x1, y1, x2, y2 in zip(df.x1_coord,df.y1_coord, df.x2_coord, df.y2_coord)]
+                  str(y1) + '))') for x1, y1, x2, y2 in zip(df.x1,df.y1, df.x2, df.y2)]
 
 print(df.head())
 df.to_csv(args.outfile)

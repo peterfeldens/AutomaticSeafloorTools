@@ -36,6 +36,15 @@ def get_boundaries(image):
     lry = uly + (src.RasterYSize * yres)
     return ulx, xres, uly, yres, lrx, lry
 
+def get_projection(image):
+    '''
+    Bestimmen der Projektion
+    '''
+    import gdal
+    src = gdal.Open(image)
+    prj=src.GetProjection()
+    return prj
+
 
 # Texture parameters
 

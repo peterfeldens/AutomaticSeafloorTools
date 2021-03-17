@@ -116,11 +116,11 @@ python yolo_rotate_img_and_boundaries.py \
 .png
 
 
-touch /Users/peter/EXPERIMENT/MBES_yolo32_pixtest/classes.txt
-echo "stones" >> /Users/peter/EXPERIMENT/MBES_yolo32_pixtest/classes.txt
+#touch /Users/peter/EXPERIMENT/MBES_yolo32_pixtest/classes.txt
+#echo "stones" >> /Users/peter/EXPERIMENT/MBES_yolo32_pixtest/classes.txt
 
-touch /Users/peter/EXPERIMENT/MBES_yolo32_pixtrain/classes.txt
-echo "stones" >> /Users/peter/EXPERIMENT/MBES_yolo32_pixtrain/classes.txt
+#touch /Users/peter/EXPERIMENT/MBES_yolo32_pixtrain/classes.txt
+#echo "stones" >> /Users/peter/EXPERIMENT/MBES_yolo32_pixtrain/classes.txt
 
 
 # continue with yolo_raun_training

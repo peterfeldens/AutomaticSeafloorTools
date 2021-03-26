@@ -88,7 +88,7 @@ df = df[df['objects'].map(lambda d: len(d)) > 0]  # Filter empty rows, otherwise
 df = flatten_nested_json_df(df)
 print(df.head())
 
-df['tifname'] = [os.path.splitext(filename)[0] + '.tif'  for filename in df['filename']]
+df['tifname'] = [os.path.splitext(filename)[0] + '.tif' for filename in df['filename']]
 df[['X', 'Y','x1','y1', 'x2', 'y2', 'proj']] = [f(img, x, y, rel_x, rel_w) for img, x,y, rel_x, rel_w in zip(df['tifname'], df['objects.relative_coordinates.center_x'], df['objects.relative_coordinates.center_y'], df['objects.relative_coordinates.width'], df['objects.relative_coordinates.height'])]
 
 df['wkt'] =  [str('POLYGON ((' + str(x1) + ' ' + str(y1) + ',' + str(x1) + ' ' +
